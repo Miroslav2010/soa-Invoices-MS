@@ -1,0 +1,73 @@
+swagger: '2.0'
+info:
+  title: Shop Example API
+  version: "0.1"
+  description: Simple example API
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: "/api"
+paths:
+  /test1/{test1_id}:
+    get:
+      tags: [ Test1 ]
+      operationId: app.get_test1
+      summary: Testing endpoint
+      parameters:
+        - $ref: '#/parameters/test1_id'
+      responses:
+        200:
+          description: Return test1
+        404:
+          description: Does not exist
+  /person/:
+    post:
+      tags: [ Person ]
+      operationId: app.person_add
+      parameters:
+        - $ref: '#/parameters/person_body'
+      responses:
+        200:
+          description: Return status
+        409:
+          description: Already exists
+  /person/{person_name}:
+    get:
+      tags: [ Person ]
+      operationId: app.person_find
+      parameters:
+        - $ref: '#/parameters/person_name'
+      responses:
+        200:
+          description: Return person object
+        404:
+          description: Person not found
+parameters:
+  test1_id:
+    name: test1_id
+    description: Test1 unique id
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+
+  person_body:
+    name: person_body
+    description: Test1 unique id
+    in: body
+    schema:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+
+  person_name:
+    name: person_name
+    description: The name of the person we're looking for
+    in: path
+    required: true
+    type: string
