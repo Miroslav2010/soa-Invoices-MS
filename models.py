@@ -1,12 +1,26 @@
 from app import db
+import uuid
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
+class Invoice(db.Model):
+    generatedId = uuid.uuid1()
+    id = db.Column(db.BigInteger, default=generatedId.int, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    surname = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False)
+    country = db.Column(db.String, nullable=False)
+    city = db.Column(db.String, nullable=False)
+    postal_code = db.Column(db.String, nullable=False)
+    address = db.Column(db.String, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String, nullable=False)
+    date = db.Column(db.Date, nullable=False)
 
 
-class Person(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(40), nullable=False)
-    surname = db.Column(db.String(100), nullable=True)
+class Item(db.Model):
+    id = db.Column(db.BigInteger, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    type = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=True)
+    quantity = db.Column(db.Integer, nullable=True)
+    duration = db.Column(db.Integer, nullable=True)

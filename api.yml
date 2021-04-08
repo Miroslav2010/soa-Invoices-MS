@@ -21,28 +21,53 @@ paths:
           description: Return test1
         404:
           description: Does not exist
-  /person/:
+  /invoice/create/{user_id}:
     post:
-      tags: [ Person ]
-      operationId: app.person_add
+      tags: [ Invoices ]
+      operationId: app.create_invoice
+      summary: Create new invoice
       parameters:
-        - $ref: '#/parameters/person_body'
+        - $ref: '#/parameters/user_id'
       responses:
         200:
-          description: Return status
-        409:
-          description: Already exists
-  /person/{person_name}:
+          description: Created OK
+        400:
+          description: Try again
+  /invoice/get/{invoice_id}:
     get:
-      tags: [ Person ]
-      operationId: app.person_find
+      tags: [ Invoices ]
+      operationId: app.get_invoice
+      summary: Get invoice
       parameters:
-        - $ref: '#/parameters/person_name'
+        - $ref: '#/parameters/invoice_id'
       responses:
         200:
-          description: Return person object
+          description: return Invoice
         404:
-          description: Person not found
+          description: Njama takov Invoice
+#  /person/:
+#    post:
+#      tags: [ Person ]
+#      operationId: app.person_add
+#      parameters:
+#        - $ref: '#/parameters/person_body'
+#      responses:
+#        200:
+#          description: Return status
+#        409:
+#          description: Already exists
+#  /person/{person_name}:
+#    get:
+#      tags: [ Person ]
+#      operationId: app.person_find
+#      parameters:
+#        - $ref: '#/parameters/person_name'
+#      responses:
+#        200:
+#          description: Return person object
+#        404:
+#          description: Person not found
+
 parameters:
   test1_id:
     name: test1_id
@@ -52,22 +77,36 @@ parameters:
     required: true
     pattern: "^[a-zA-Z0-9-]+$"
 
-  person_body:
-    name: person_body
-    description: Test1 unique id
-    in: body
-    schema:
-      required:
-        - name
-      properties:
-        name:
-          type: string
-        surname:
-          type: string
-
-  person_name:
-    name: person_name
-    description: The name of the person we're looking for
+  user_id:
+    name: user_id
+    description: The ID of the User
     in: path
-    required: true
     type: string
+    required: true
+
+  invoice_id:
+    name: invoice_id
+    description: The ID of the Invoice
+    in: path
+    type: string
+    required: true
+
+#  person_body:
+#    name: person_body
+#    description: Test1 unique id
+#    in: body
+#    schema:
+#      required:
+#        - name
+#      properties:
+#        name:
+#          type: string
+#        surname:
+#          type: string
+#
+#  person_name:
+#    name: person_name
+#    description: The name of the person we're looking for
+#    in: path
+#    required: true
+#    type: string
