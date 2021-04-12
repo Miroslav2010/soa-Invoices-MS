@@ -45,10 +45,10 @@ paths:
           description: return Invoice by Id
         404:
           description: Invoice not found
-  /invoice/find_invoice_by_user/{user_id}:
+  /invoice/find_invoices_by_user/{user_id}:
     get:
       tags: [ Invoices ]
-      operationId: app.get_invoice_by_user
+      operationId: app.get_invoices_by_user
       summary: Get invoice by user
       parameters:
         - $ref: '#/parameters/user_id'
