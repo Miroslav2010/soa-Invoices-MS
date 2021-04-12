@@ -7,7 +7,7 @@ class Invoice(db.Model):
     id = db.Column(db.BigInteger, default=generatedId.int, primary_key=True)
     name = db.Column(db.String, nullable=False)
     surname = db.Column(db.String, nullable=False)
-    username = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.BigInteger, nullable=False)
     country = db.Column(db.String, nullable=False)
     city = db.Column(db.String, nullable=False)
     postal_code = db.Column(db.String, nullable=False)

@@ -11,16 +11,26 @@ def get_test1(test1_id):
     return {'id': 1, 'name': 'name', 'entered_id': test1_id}
 
 
-def create_invoice(user_id):
-    new_invoice = Invoice(id=user_id, name='Petko', surname='Petkovski',
-                          username='Petko123', country='Macedonia Severnata',
-                          city='Debar', postal_code=1250, address='Kaurska Ulica br.69/420',
+def create_invoice(invoice_body):
+    # Get User Details from User microservice : TODO
+
+    # Get Transaction details from Payments microservice : TODO
+
+    # Get Items from Inventory microservice : TODO
+
+    new_invoice = Invoice(id=1, name='Petko', surname='Petkovski',
+                          username='Petko123', country='Macedonia',
+                          city='Debar', postal_code=1250, address='Ulica br.11/11',
                           price=69.99, currency='MKD', date=datetime.date(2021, 4, 8))
     db.session.add(new_invoice)
     db.session.commit()
 
+    # Notify discount microservice if a coupon is bought : TODO
 
-def get_invoice(invoice_id):
+    # Notify statistics microservice : TODO
+
+
+def get_invoice_by_id(invoice_id):
     found_invoice = db.session.query(Invoice).filter_by(id=invoice_id).first()
     if found_invoice:
         return {'id': found_invoice.id, 'name': found_invoice.name, 'surname': found_invoice.surname,
@@ -30,6 +40,21 @@ def get_invoice(invoice_id):
     else:
         return {'error': '{} not found'.format(invoice_id)}, 404
 
+
+def get_invoice_by_user(user_id):
+    user_invoices = db.session.query(Invoice).filter_by(user_id)
+    if user_invoices:
+        return user_invoices
+    else:
+        return {'error': 'No invoices for user {}'.format(user_id)}, 404
+
+
+def get_all():
+    all_invoices = db.session.query(Invoice).all()
+    if all_invoices:
+        return all_invoices
+    else:
+        return {'error': 'No invoices found'}, 404
 
 # def person_add(person_body):
 #     new_person = Person(name=person_body['name'], surname=person_body['surname'])

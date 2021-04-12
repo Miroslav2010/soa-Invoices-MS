@@ -1,50 +1,72 @@
 swagger: '2.0'
 info:
-  title: Shop Example API
+  title: Invoice API
   version: "0.1"
-  description: Simple example API
+  description: Invoices microservice API
 consumes:
   - application/json
 produces:
   - application/json
 basePath: "/api"
 paths:
-  /test1/{test1_id}:
-    get:
-      tags: [ Test1 ]
-      operationId: app.get_test1
-      summary: Testing endpoint
-      parameters:
-        - $ref: '#/parameters/test1_id'
-      responses:
-        200:
-          description: Return test1
-        404:
-          description: Does not exist
-  /invoice/create/{user_id}:
+#  /test1/{test1_id}:
+#    get:
+#      tags: [ Test1 ]
+#      operationId: app.get_test1
+#      summary: Testing endpoint
+#      parameters:
+#        - $ref: '#/parameters/test1_id'
+#      responses:
+#        200:
+#          description: Return test1
+#        404:
+#          description: Does not exist
+  /invoice/create/{invoice_body}:
     post:
       tags: [ Invoices ]
       operationId: app.create_invoice
       summary: Create new invoice
       parameters:
-        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/invoice_body'
       responses:
         200:
           description: Created OK
         400:
           description: Try again
-  /invoice/get/{invoice_id}:
+  /invoice/find_invoice_by_id/{invoice_id}:
     get:
       tags: [ Invoices ]
-      operationId: app.get_invoice
-      summary: Get invoice
+      operationId: app.get_invoice_by_id
+      summary: Get invoice by id
       parameters:
         - $ref: '#/parameters/invoice_id'
       responses:
         200:
-          description: return Invoice
+          description: return Invoice by Id
         404:
-          description: Njama takov Invoice
+          description: Invoice not found
+  /invoice/find_invoice_by_user/{user_id}:
+    get:
+      tags: [ Invoices ]
+      operationId: app.get_invoice_by_user
+      summary: Get invoice by user
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: return Invoice by User
+        404:
+          description: Invoice not found
+  /invoice/find_all:
+    get:
+      tags: [ Invoices ]
+      operationId: app.get_all
+      summary: Get all invoices
+      responses:
+        200:
+          description: return all Invoices
+        404:
+          description: Invoices not found
 #  /person/:
 #    post:
 #      tags: [ Person ]
@@ -69,13 +91,13 @@ paths:
 #          description: Person not found
 
 parameters:
-  test1_id:
-    name: test1_id
-    description: Test1 unique id
-    in: path
-    type: string
-    required: true
-    pattern: "^[a-zA-Z0-9-]+$"
+#  test1_id:
+#    name: test1_id
+#    description: Test1 unique id
+#    in: path
+#    type: string
+#    required: true
+#    pattern: "^[a-zA-Z0-9-]+$"
 
   user_id:
     name: user_id
@@ -90,6 +112,23 @@ parameters:
     in: path
     type: string
     required: true
+
+  invoice_body:
+    name: invoice_body
+    description: Required parameters for invoice
+    in: body
+    schema:
+      required:
+        - user_id
+        - transacion_id
+        - item_id_list
+      properties:
+        user_id:
+          type: integer
+        transaction_id:
+          type: integer
+        item_id_list:
+          type: object
 
 #  person_body:
 #    name: person_body
