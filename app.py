@@ -41,7 +41,7 @@ def get_invoice_by_id(invoice_id):
         return {'error': '{} not found'.format(invoice_id)}, 404
 
 
-def get_invoice_by_user(user_id):
+def get_invoices_by_user(user_id):
     user_invoices = db.session.query(Invoice).filter_by(user_id)
     if user_invoices:
         return user_invoices
