@@ -1,4 +1,8 @@
-Flask
+Flask~=1.1.2
 Flask-Migrate
-connexion[swagger-ui]
+connexion[swagger-ui]~=2.7.0
 sqlalchemy
+marshmallow~=3.11.1
+PyJWT~=2.0.1
+python-dateutil~=2.8.1
+urllib3~=1.26.4

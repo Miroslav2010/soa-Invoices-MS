@@ -21,7 +21,7 @@ paths:
 #          description: Return test1
 #        404:
 #          description: Does not exist
-  /invoice/create/{invoice_body}:
+  /invoice/create:
     post:
       tags: [ Invoices ]
       operationId: app.create_invoice
@@ -120,15 +120,15 @@ parameters:
     schema:
       required:
         - user_id
-        - transacion_id
-        - item_id_list
+        - transaction_id
+        - item_list
       properties:
         user_id:
           type: integer
         transaction_id:
           type: integer
-        item_id_list:
-          type: object
+        item_list:
+          type: array
 
 #  person_body:
 #    name: person_body
