@@ -21,6 +21,7 @@ user_ms_url = 'http://localhost:5001/api'
 payments_ms_url = 'http://localhost:5002/api'
 inventory_ms_url = 'http://localhost:5003/api'
 statistics_ms_url = 'http://localhost:5004/api'
+discount_ms_url = 'http://localhost:5005/api'
 
 http = urllib3.PoolManager()
 
@@ -49,7 +50,7 @@ def has_role(arg):
     return has_role_inner
 
 
-# @has_role(['admin', 'shopping_cart'])
+@has_role(['admin', 'shopping_cart'])
 def create_invoice(invoice_body):
     # Get User Details from User microservice
     user = http.request('GET', f"{user_ms_url}/details/{invoice_body['user_id']}")
@@ -60,12 +61,17 @@ def create_invoice(invoice_body):
     # Get Items from Inventory microservice
     items = []
     for item in invoice_body['item_list']:
+        http.request('POST', f"{statistics_ms_url}/invoice/",
+                     data={'user_id': invoice_body['user_id'], 'type_of_product': item.type, 'quantity': item.quantity})
         if item.type == 'Rent':
             new_item = http.request('GET', f"{inventory_ms_url}/get/product_rent/{item.id}")
             items.append(new_item)
         elif item.type == 'Buy':
             new_item = http.request('GET', f"{inventory_ms_url}/get/product_buy/{item.id}")
             items.append(new_item)
+        elif item.type == 'Coupon':
+            http.request('POST', f"{discount_ms_url}/coupon/create",
+                         data={'id': item.id, 'type': item.type, 'userId': invoice_body['user_id']})
 
     new_invoice = Invoice(name=user.name, surname=user.surname,
                           username=user.username, country=user.country,
