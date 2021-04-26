@@ -49,7 +49,7 @@ def has_role(arg):
     return has_role_inner
 
 
-@has_role(['admin', 'shopping_cart'])
+# @has_role(['admin', 'shopping_cart'])
 def create_invoice(invoice_body):
     # Get User Details from User microservice
     user = http.request('GET', f"{user_ms_url}/details/{invoice_body['user_id']}")
@@ -95,7 +95,7 @@ def get_invoice_by_id(invoice_id):
 
 
 @has_role(['admin'])
-def get_invoice_by_user(user_id):
+def get_invoices_by_user(user_id):
     user_invoices = db.session.query(Invoice).filter_by(user_id).all()
     if user_invoices:
         return result_invoice(user_invoices)
@@ -112,18 +112,14 @@ def get_all():
         return {'error': 'No invoices found'}, 404
 
 
-# def person_add(person_body):
-#     new_person = Person(name=person_body['name'], surname=person_body['surname'])
-#     db.session.add(new_person)
-#     db.session.commit()
-#
-#
-# def person_find(person_name):
-#     found_person = db.session.query(Person).filter_by(name=person_name).first()
-#     if found_person:
-#         return {'id': found_person.id, 'name': found_person.name, 'surname': found_person.surname}
-#     else:
-#         return {'error': '{} not found'.format(person_name)}, 404
+@has_role(['admin'])
+def delete_invoice(invoice_id):
+    invoice_delete = db.session.query(Invoice).filter_by(id=invoice_id).first()
+    if invoice_delete:
+        db.session.query(Invoice).filter_by(id=invoice_id).delete()
+        db.session.commit()
+    else:
+        return {'error': '{} not found'.format(invoice_id)}, 404
 
 
 def decode_token(token):
