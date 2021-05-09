@@ -8,5 +8,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+EXPOSE 5007
+
 CMD python app.py
 
