@@ -6,23 +6,55 @@ import connexion
 import jwt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from consul_functions import get_consul_service, register_to_consul
+
+from consul import Consul, Check
 
 from invoice import *
 
 # dummy reference for migrations only
 
 
+consul_port = 8500
+service_name = "invoices"
+service_port = 5000
+
+
+def register_to_consul():
+    consul = Consul(host='consul', port=consul_port)
+
+    agent = consul.agent
+
+    service = agent.service
+
+    check = Check.http(f"http://{service_name}:{service_port}/api/ui", interval="10s", timeout="5s", deregister="1s")
+
+    service.register(service_name, service_id=service_name, port=service_port, check=check)
+
+
+def get_service(service_id):
+    consul = Consul(host="consul", port=consul_port)
+
+    agent = consul.agent
+
+    service_list = agent.services()
+
+    service_info = service_list[service_id]
+
+    return service_info['Address'], service_info['Port']
+
+
+register_to_consul()
+
 invoice_schema = InvoiceSchema()
 invoices_schema = InvoiceSchema(many=True)
 JWT_SECRET = 'INVOICES MS SECRET'
 JWT_LIFETIME_SECONDS = 600000
 
-user_ms_url = 'http://localhost:5010/api'
-payments_ms_url = 'http://localhost:5005/api'
-inventory_ms_url = 'http://localhost:5009/api'
+user_ms_url = 'http://localhost:5001/api'
+payments_ms_url = 'http://localhost:5002/api'
+inventory_ms_url = 'http://localhost:5003/api'
 statistics_ms_url = 'http://localhost:5004/api'
-discount_ms_url = 'http://localhost:5006/api'
+discount_ms_url = 'http://localhost:5005/api'
 
 http = urllib3.PoolManager()
 
@@ -62,9 +94,8 @@ def create_invoice(invoice_body):
     # Get Items from Inventory microservice
     items = []
     for item in invoice_body['item_list']:
-        # http.request('POST', f"{statistics_ms_url}/invoice/",
-        #              data={'user_id': invoice_body['user_id'],
-        #              'type_of_product': item.type, 'quantity': item.quantity})
+        http.request('POST', f"{statistics_ms_url}/invoice/",
+                     data={'user_id': invoice_body['user_id'], 'type_of_product': item.type, 'quantity': item.quantity})
         if item.type == 'Rent':
             new_item = http.request('GET', f"{inventory_ms_url}/get/product_rent/{item.id}")
             items.append(new_item)
@@ -90,8 +121,7 @@ def create_invoice(invoice_body):
     # Notify discount microservice if a coupon is bought : TODO
 
     # Notify statistics microservice : TODO Do this for each item :
-    # http.request('POST', f"{statistics_ms_url}/invoice/", data = {'user_id': invoice_body['user_id']
-    # , 'type_of_product': item.type, 'quantity': item.quantity})
+    # http.request('POST', f"{statistics_ms_url}/invoice/", data = {'user_id': invoice_body['user_id'], 'type_of_product': item.type, 'quantity': item.quantity})
 
 
 @has_role(['admin'])
@@ -141,10 +171,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 connexion_app.add_api("api.yml")
-
-
-register_to_consul()
-
 
 from models import Invoice
 
